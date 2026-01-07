@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Чести диагнози - Медицинско досие')}"></head>
+<body class="d-flex flex-column min-vh-100">
+<nav th:replace="~{fragments/layout :: navbar}"></nav>
+
+<main class="flex-grow-1">
+    <div class="container mt-4">
+        <h2><i class="bi bi-bar-chart"></i> Най-чести диагнози</h2>
+
+        <div class="card mt-4">
+            <div class="card-body">
+                <table class="table table-striped" th:if="${!frequencies.isEmpty()}">
+                    <thead class="table-dark">
+                    <tr>
+                        <th>#</th>
+                        <th>Код</th>
+                        <th>Диагноза</th>
+                        <th>Брой случаи</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="f, stat : ${frequencies}">
+                        <td th:text="${stat.index + 1}"></td>
+                        <td><span class="badge bg-primary" th:text="${f.diagnosis.code}"></span></td>
+                        <td th:text="${f.diagnosis.name}"></td>
+                        <td>
+                            <span class="badge bg-info" th:text="${f.frequency}"></span>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+                <div th:if="${frequencies.isEmpty()}" class="alert alert-info">
+                    Няма данни за диагнози.
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<div th:replace="~{fragments/layout :: scripts}"></div>
+</body>
+</html>

@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head th:replace="~{fragments/layout :: head('Прегледи - Медицинско досие')}"></head>
+
+<body class="d-flex flex-column min-vh-100">
+    <nav th:replace="~{fragments/layout :: navbar}"></nav>
+
+    <main class="flex-grow-1">
+        <div class="container mt-4">
+
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2><i class="bi bi-journal-medical"></i> Прегледи</h2>
+                <a th:href="@{/examinations/new}" class="btn btn-primary" sec:authorize="hasAnyRole('ADMIN', 'DOCTOR')">
+
+                    <i class="bi bi-plus-circle"></i> Нов преглед
+                </a>
+            </div>
+
+            <div class="card">
+                <div class="card-body">
+                    <div th:if="${#lists.isEmpty(examinations)}" class="text-center text-muted py-4">
+                        <i class="bi bi-journal-x display-4"></i>
+                        <p class="mt-2">Няма прегледи</p>
+                    </div>
+                    <div th:unless="${#lists.isEmpty(examinations)}" class="table-responsive">
+                        <table class="table table-striped table-hover">
+                            <thead class="table-dark">
+                                <tr>
+                                    <th>Дата</th>
+                                    <th sec:authorize="hasAnyRole('ADMIN', 'DOCTOR')">Пациент</th>
+                                    <th>Лекар</th>
+                                    <th>Диагноза</th>
+                                    <th>Болничен</th>
+                                    <th>Действия</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="exam : ${examinations}">
+                                    <td th:text="${#temporals.format(exam.examinationDate, 'dd.MM.yyyy')}"></td>
+                                    <td th:text="${exam.patient.name}" sec:authorize="hasAnyRole('ADMIN', 'DOCTOR')">
+                                    </td>
+                                    <td th:text="${exam.doctor.name}"></td>
+                                    <td>
+                                        <span th:if="${exam.diagnosis != null}" class="badge bg-info"
+                                            th:text="${exam.diagnosis.code + ' - ' + exam.diagnosis.name}">
+                                        </span>
+                                        <span th:unless="${exam.diagnosis != null}" class="text-muted">-</span>
+                                    </td>
+                                    <td>
+                                        <span th:if="${exam.sickLeave != null}" class="badge bg-warning text-dark"
+                                            th:text="${exam.sickLeave.numberOfDays + ' дни'}">
+                                        </span>
+                                        <span th:unless="${exam.sickLeave != null}" class="text-muted">-</span>
+                                    </td>
+                                    <td>
+                                        <a th:href="@{/examinations/{id}(id=${exam.id})}" class="btn btn-sm btn-info">
+                                            <i class="bi bi-eye"></i>
+                                        </a>
+                                        <a th:href="@{/examinations/edit/{id}(id=${exam.id})}"
+                                            class="btn btn-sm btn-warning"
+                                            sec:authorize="hasAnyRole('ADMIN', 'DOCTOR')">
+                                            <i class="bi bi-pencil"></i>
+                                        </a>
+                                        <button type="button" class="btn btn-sm btn-danger"
+                                            th:onclick="'confirmDelete(' + ${exam.id} + ')'"
+                                            sec:authorize="hasRole('ADMIN')">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <div th:replace="~{fragments/layout :: scripts}"></div>
+
+    <script th:inline="javascript">
+        function confirmDelete(id) {
+            if (confirm('Сигурни ли сте, че искате да изтриете този преглед?')) {
+                window.location.href = '/examinations/delete/' + id;
+            }
+        }
+    </script>
+</body>
+
+</html>

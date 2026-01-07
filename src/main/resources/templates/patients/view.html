@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Пациент - Медицинско досие')}"></head>
+<body class="d-flex flex-column min-vh-100">
+<nav th:replace="~{fragments/layout :: navbar}"></nav>
+
+<main class="flex-grow-1">
+    <div class="container mt-4">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2><i class="bi bi-person"></i> <span th:text="${patient.name}"></span></h2>
+            <a th:href="@{/patients}" class="btn btn-secondary">
+                <i class="bi bi-arrow-left"></i> Назад
+            </a>
+        </div>
+
+        <div class="row">
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-header bg-primary text-white">
+                        <i class="bi bi-info-circle"></i> Информация
+                    </div>
+                    <div class="card-body">
+                        <p><strong>ЕГН:</strong> <span th:text="${patient.egn}"></span></p>
+                        <p><strong>Личен лекар:</strong>
+                            <span th:text="${patient.gp != null ? patient.gp.name : 'Няма'}"></span>
+                        </p>
+                        <p><strong>Осигуровки:</strong>
+                            <span th:if="${patient.hasValidInsurance}" class="badge bg-success">Платени</span>
+                            <span th:unless="${patient.hasValidInsurance}" class="badge bg-danger">Неплатени</span>
+                        </p>
+                        <p th:if="${patient.lastInsurancePayment != null}">
+                            <strong>Последно плащане:</strong>
+                            <span th:text="${#temporals.format(patient.lastInsurancePayment, 'dd.MM.yyyy')}"></span>
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-header bg-info text-white">
+                        <i class="bi bi-journal-medical"></i> История на прегледите
+                    </div>
+                    <div class="card-body">
+                        <table class="table table-striped" th:if="${!examinations.isEmpty()}">
+                            <thead>
+                            <tr>
+                                <th>Дата</th>
+                                <th>Лекар</th>
+                                <th>Диагноза</th>
+                                <th>Болничен</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr th:each="e : ${examinations}">
+                                <td th:text="${#temporals.format(e.examinationDate, 'dd.MM.yyyy')}"></td>
+                                <td th:text="${e.doctor.name}"></td>
+                                <td>
+                                    <span th:if="${e.diagnosis != null}" th:text="${e.diagnosis.name}"></span>
+                                    <span th:unless="${e.diagnosis != null}">-</span>
+                                </td>
+                                <td>
+                                    <span th:if="${e.sickLeave != null}"
+                                          th:text="${e.sickLeave.numberOfDays + ' дни'}"></span>
+                                    <span th:unless="${e.sickLeave != null}">-</span>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                        <div th:if="${examinations.isEmpty()}" class="alert alert-info">
+                            Няма записани прегледи.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<div th:replace="~{fragments/layout :: scripts}"></div>
+</body>
+</html>

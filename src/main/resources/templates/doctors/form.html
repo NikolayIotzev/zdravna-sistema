@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Лекар - Медицинско досие')}"></head>
+<body class="d-flex flex-column min-vh-100">
+<nav th:replace="~{fragments/layout :: navbar}"></nav>
+
+<main class="flex-grow-1">
+    <div class="container mt-4">
+        <h2>
+            <i class="bi bi-person-badge"></i>
+            <span th:text="${doctor.id != null ? 'Редактиране на лекар' : 'Нов лекар'}"></span>
+        </h2>
+
+        <div class="card mt-4">
+            <div class="card-body">
+                <form th:action="${doctor.id != null ? '/doctors/edit/' + doctor.id : '/doctors/new'}"
+                      method="post" th:object="${doctor}">
+
+                    <div th:if="${doctor.id == null}" class="mb-3">
+                        <label for="username" class="form-label">Потребителско име *</label>
+                        <input type="text" class="form-control" id="username" th:field="*{username}"
+                               th:required="${doctor.id == null}"
+                               minlength="3" maxlength="50" placeholder="doctor_username">
+                        <div class="form-text">Между 3 и 50 символа</div>
+                    </div>
+
+                    <div th:if="${doctor.id == null}" class="mb-3">
+                        <label for="password" class="form-label">Парола *</label>
+                        <input type="password" class="form-control" id="password" th:field="*{password}"
+                               th:required="${doctor.id == null}"
+                               minlength="6" maxlength="100" placeholder="******">
+                        <div class="form-text">Минимум 6 символа</div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="uin" class="form-label">УИН *</label>
+                        <input type="text" class="form-control" id="uin" th:field="*{uin}" required
+                               minlength="6" maxlength="20" placeholder="Уникален идентификационен номер">
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="name" class="form-label">Име *</label>
+                        <input type="text" class="form-control" id="name" th:field="*{name}" required
+                               minlength="2" maxlength="100" placeholder="Д-р Иван Петров">
+                    </div>
+
+                    <div class="mb-3 form-check">
+                        <input type="checkbox" class="form-check-input" id="isGp" th:field="*{gp}">
+                        <label class="form-check-label" for="isGp">Личен лекар (ОПЛ)</label>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Специалности</label>
+                        <div th:each="specialty : ${specialties}" class="form-check">
+                            <input type="checkbox" class="form-check-input"
+                                   th:id="${'spec_' + specialty.id}"
+                                   name="specialtyIds"
+                                   th:value="${specialty.id}"
+                                   th:checked="${selectedSpecialties != null && selectedSpecialties.contains(specialty.id)}">
+                            <label class="form-check-label" th:for="${'spec_' + specialty.id}"
+                                   th:text="${specialty.name}"></label>
+                        </div>
+                    </div>
+
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-check-lg"></i> Запази
+                        </button>
+                        <a th:href="@{/doctors}" class="btn btn-secondary">
+                            <i class="bi bi-x-lg"></i> Отказ
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</main>
+
+<div th:replace="~{fragments/layout :: scripts}"></div>
+</body>
+</html>

@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Прегледи по период - Медицинско досие')}"></head>
+<body class="d-flex flex-column min-vh-100">
+<nav th:replace="~{fragments/layout :: navbar}"></nav>
+
+<main class="flex-grow-1">
+    <div class="container mt-4">
+        <h2><i class="bi bi-calendar-range"></i> Прегледи по период</h2>
+
+        <div class="card mt-4">
+            <div class="card-body">
+                <form method="get" class="row g-3 align-items-end">
+                    <div class="col-md-4">
+                        <label for="startDate" class="form-label">От дата:</label>
+                        <input type="date" class="form-control" id="startDate" name="startDate"
+                               th:value="${startDate}">
+                    </div>
+                    <div class="col-md-4">
+                        <label for="endDate" class="form-label">До дата:</label>
+                        <input type="date" class="form-control" id="endDate" name="endDate"
+                               th:value="${endDate}">
+                    </div>
+                    <div class="col-md-2">
+                        <button type="submit" class="btn btn-primary">Търси</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="card mt-4" th:if="${examinations != null}">
+            <div class="card-header">
+                Намерени прегледи: <span th:text="${examinations.size()}"></span>
+            </div>
+            <div class="card-body">
+                <table class="table table-striped" th:if="${!examinations.isEmpty()}">
+                    <thead class="table-dark">
+                    <tr>
+                        <th>Дата</th>
+                        <th>Пациент</th>
+                        <th>Лекар</th>
+                        <th>Диагноза</th>
+                        <th>Болничен</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="e : ${examinations}">
+                        <td th:text="${#temporals.format(e.examinationDate, 'dd.MM.yyyy')}"></td>
+                        <td th:text="${e.patient.name}"></td>
+                        <td th:text="${e.doctor.name}"></td>
+                        <td>
+                            <span th:if="${e.diagnosis != null}"
+                                  th:text="${e.diagnosis.code + ' - ' + e.diagnosis.name}"></span>
+                            <span th:unless="${e.diagnosis != null}">-</span>
+                        </td>
+                        <td>
+                            <span th:if="${e.sickLeave != null}"
+                                  th:text="${e.sickLeave.numberOfDays + ' дни'}"></span>
+                            <span th:unless="${e.sickLeave != null}">-</span>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+                <div th:if="${examinations.isEmpty()}" class="alert alert-info">
+                    Няма намерени прегледи за избрания период.
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<div th:replace="~{fragments/layout :: scripts}"></div>
+</body>
+</html>

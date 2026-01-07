@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:fragment="head(title)">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${title}">Медицинско досие</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.2/font/bootstrap-icons.min.css">
+    <link th:href="@{/css/style.css}" rel="stylesheet">
+</head>
+<body>
+<nav th:fragment="navbar" class="navbar navbar-expand-lg navbar-dark" sec:authorize="isAuthenticated()">
+    <div class="container">
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav me-auto">
+                <li class="nav-item" sec:authorize="hasAnyRole('ADMIN', 'DOCTOR')">
+                    <a class="nav-link" th:href="@{/patients}" data-path="/patients">
+                        <i class="bi bi-people"></i> Пациенти
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/doctors}" data-path="/doctors">
+                        <i class="bi bi-person-badge"></i> Лекари
+                    </a>
+                </li>
+                <li class="nav-item" sec:authorize="hasAnyRole('ADMIN', 'DOCTOR')">
+                    <a class="nav-link" th:href="@{/diagnoses}" data-path="/diagnoses">
+                        <i class="bi bi-clipboard2-pulse"></i> Диагнози
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/examinations}" data-path="/examinations">
+                        <i class="bi bi-journal-medical"></i> Прегледи
+                    </a>
+                </li>
+                <li class="nav-item dropdown" sec:authorize="hasAnyRole('ADMIN', 'DOCTOR')">
+                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" data-path="/reports">
+                        <i class="bi bi-file-earmark-bar-graph"></i> Справки
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" th:href="@{/reports/patients-by-diagnosis}">Пациенти по диагноза</a></li>
+                        <li><a class="dropdown-item" th:href="@{/reports/frequent-diagnoses}">Чести диагнози</a></li>
+                        <li><a class="dropdown-item" th:href="@{/reports/patients-per-gp}">Пациенти на ОПЛ</a></li>
+                        <li><a class="dropdown-item" th:href="@{/reports/examinations-per-doctor}">Прегледи на лекар</a></li>
+                        <li><a class="dropdown-item" th:href="@{/reports/sick-leaves}">Болнични листове</a></li>
+                    </ul>
+                </li>
+            </ul>
+            <ul class="navbar-nav">
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                        <i class="bi bi-person-circle"></i>
+                        <span th:text="${currentUserDisplayName}">User</span>
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li><span class="dropdown-item-text text-muted" th:text="${currentUsername}"></span></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li>
+                            <form th:action="@{/logout}" method="post" class="d-inline">
+                                <button type="submit" class="dropdown-item">
+                                    <i class="bi bi-box-arrow-right"></i> Изход
+                                </button>
+                            </form>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<div th:fragment="scripts">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.querySelectorAll('.nav-link[data-path]').forEach(link => {
+            if (window.location.pathname.startsWith(link.dataset.path)) {
+                link.classList.add('active');
+            }
+        });
+    </script>
+</div>
+</body>
+</html>

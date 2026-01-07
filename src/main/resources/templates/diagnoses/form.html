@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Диагноза - Медицинско досие')}"></head>
+<body class="d-flex flex-column min-vh-100">
+<nav th:replace="~{fragments/layout :: navbar}"></nav>
+
+<main class="flex-grow-1">
+    <div class="container mt-4">
+        <h2>
+            <i class="bi bi-clipboard2-pulse"></i>
+            <span th:text="${diagnosis.id != null ? 'Редактиране на диагноза' : 'Нова диагноза'}"></span>
+        </h2>
+
+        <div class="card mt-4">
+            <div class="card-body">
+                <form th:action="${diagnosis.id != null ? '/diagnoses/edit/' + diagnosis.id : '/diagnoses/new'}"
+                      method="post" th:object="${diagnosis}">
+
+                    <div class="mb-3">
+                        <label for="code" class="form-label">Код *</label>
+                        <input type="text" class="form-control" id="code" th:field="*{code}" required
+                               maxlength="20" placeholder="J06.9">
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="name" class="form-label">Наименование *</label>
+                        <input type="text" class="form-control" id="name" th:field="*{name}" required
+                               maxlength="200" placeholder="Остра инфекция на горните дихателни пътища">
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="description" class="form-label">Описание</label>
+                        <textarea class="form-control" id="description" th:field="*{description}"
+                                  rows="3" maxlength="1000"></textarea>
+                    </div>
+
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-check-lg"></i> Запази
+                        </button>
+                        <a th:href="@{/diagnoses}" class="btn btn-secondary">
+                            <i class="bi bi-x-lg"></i> Отказ
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</main>
+
+<div th:replace="~{fragments/layout :: scripts}"></div>
+</body>
+</html>

@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Пациенти по диагноза - Медицинско досие')}"></head>
+<body class="d-flex flex-column min-vh-100">
+<nav th:replace="~{fragments/layout :: navbar}"></nav>
+
+<main class="flex-grow-1">
+    <div class="container mt-4">
+        <h2><i class="bi bi-file-earmark-bar-graph"></i> Пациенти по диагноза</h2>
+
+        <div class="card mt-4">
+            <div class="card-body">
+                <form method="get" class="row g-3 align-items-end">
+                    <div class="col-md-6">
+                        <label for="diagnosisId" class="form-label">Изберете диагноза:</label>
+                        <select class="form-select" id="diagnosisId" name="diagnosisId">
+                            <option value="">-- Изберете --</option>
+                            <option th:each="d : ${diagnoses}" th:value="${d.id}"
+                                    th:text="${d.code + ' - ' + d.name}"
+                                    th:selected="${selectedDiagnosis != null && selectedDiagnosis == d.id}">
+                            </option>
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <button type="submit" class="btn btn-primary">Търси</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="card mt-4" th:if="${patients != null}">
+            <div class="card-header">Намерени пациенти: <span th:text="${patients.size()}"></span></div>
+            <div class="card-body">
+                <table class="table table-striped" th:if="${!patients.isEmpty()}">
+                    <thead class="table-dark">
+                    <tr>
+                        <th>Име</th>
+                        <th>ЕГН</th>
+                        <th>Личен лекар</th>
+                        <th>Осигуровки</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="p : ${patients}">
+                        <td th:text="${p.name}"></td>
+                        <td th:text="${p.egn}"></td>
+                        <td th:text="${p.gp != null ? p.gp.name : '-'}"></td>
+                        <td>
+                            <span th:if="${p.hasValidInsurance}" class="badge bg-success">Платени</span>
+                            <span th:unless="${p.hasValidInsurance}" class="badge bg-danger">Неплатени</span>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+                <div th:if="${patients.isEmpty()}" class="alert alert-info">
+                    Няма намерени пациенти с тази диагноза.
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<div th:replace="~{fragments/layout :: scripts}"></div>
+</body>
+</html>

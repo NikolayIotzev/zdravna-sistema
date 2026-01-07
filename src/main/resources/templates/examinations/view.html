@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Преглед - Медицинско досие')}"></head>
+<body class="d-flex flex-column min-vh-100">
+<nav th:replace="~{fragments/layout :: navbar}"></nav>
+
+<main class="flex-grow-1">
+    <div class="container mt-4">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2><i class="bi bi-journal-medical"></i> Преглед #<span th:text="${examination.id}"></span></h2>
+            <a th:href="@{/examinations}" class="btn btn-secondary">
+                <i class="bi bi-arrow-left"></i> Назад
+            </a>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card mb-3">
+                    <div class="card-header bg-primary text-white">
+                        <i class="bi bi-info-circle"></i> Основна информация
+                    </div>
+                    <div class="card-body">
+                        <p><strong>Дата:</strong>
+                            <span th:text="${#temporals.format(examination.examinationDate, 'dd.MM.yyyy')}"></span>
+                        </p>
+                        <p><strong>Пациент:</strong> <span th:text="${examination.patient.name}"></span>
+                            (<span th:text="${examination.patient.egn}"></span>)
+                        </p>
+                        <p><strong>Лекар:</strong> <span th:text="${examination.doctor.name}"></span></p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="card mb-3" th:if="${examination.diagnosis != null}">
+                    <div class="card-header bg-warning text-dark">
+                        <i class="bi bi-clipboard2-pulse"></i> Диагноза
+                    </div>
+                    <div class="card-body">
+                        <p><strong>Код:</strong>
+                            <span class="badge bg-primary" th:text="${examination.diagnosis.code}"></span>
+                        </p>
+                        <p><strong>Наименование:</strong> <span th:text="${examination.diagnosis.name}"></span></p>
+                    </div>
+                </div>
+
+                <div class="card mb-3" th:if="${examination.sickLeave != null}">
+                    <div class="card-header bg-danger text-white">
+                        <i class="bi bi-file-medical"></i> Болничен лист
+                    </div>
+                    <div class="card-body">
+                        <p><strong>Начална дата:</strong>
+                            <span th:text="${#temporals.format(examination.sickLeave.startDate, 'dd.MM.yyyy')}"></span>
+                        </p>
+                        <p><strong>Брой дни:</strong> <span th:text="${examination.sickLeave.numberOfDays}"></span></p>
+                        <p><strong>Крайна дата:</strong>
+                            <span th:text="${#temporals.format(examination.sickLeave.endDate, 'dd.MM.yyyy')}"></span>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-12">
+                <div class="card mb-3" th:if="${examination.treatment != null && !examination.treatment.isEmpty()}">
+                    <div class="card-header bg-success text-white">
+                        <i class="bi bi-heart-pulse"></i> Лечение
+                    </div>
+                    <div class="card-body">
+                        <p th:text="${examination.treatment}"></p>
+                    </div>
+                </div>
+
+                <div class="card mb-3" th:if="${examination.prescription != null && !examination.prescription.isEmpty()}">
+                    <div class="card-header bg-info text-white">
+                        <i class="bi bi-prescription2"></i> Рецепта
+                    </div>
+                    <div class="card-body">
+                        <p th:text="${examination.prescription}"></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<div th:replace="~{fragments/layout :: scripts}"></div>
+</body>
+</html>

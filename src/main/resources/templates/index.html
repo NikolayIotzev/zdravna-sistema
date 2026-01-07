@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments/layout :: head('Медицинско досие')}"></head>
+<body class="d-flex flex-column min-vh-100">
+<nav th:replace="~{fragments/layout :: navbar}"></nav>
+
+<main class="flex-grow-1">
+    <div class="container mt-4">
+        <div class="row">
+            <div class="col-12">
+                <div class="jumbotron bg-light p-5 rounded">
+                    <h1 class="display-4">
+                        <i class="bi bi-heart-pulse text-primary"></i>
+                        Медицинско досие на пациента
+                    </h1>
+                    <p class="lead">Система за управление на медицински записи, прегледи и болнични листове.</p>
+                    <hr class="my-4">
+                    <p>Добре дошли в системата за медицинско досие. Изберете опция от менюто за да започнете.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="row mt-4" sec:authorize="isAuthenticated()">
+            <div class="col-md-4 mb-3">
+                <div class="card h-100">
+                    <div class="card-body text-center">
+                        <i class="bi bi-people display-4 text-primary"></i>
+                        <h5 class="card-title mt-3">Пациенти</h5>
+                        <p class="card-text">Управление на пациентски записи и медицинска история.</p>
+                        <a th:href="@{/patients}" class="btn btn-primary" sec:authorize="hasAnyRole('ADMIN', 'DOCTOR')">
+                            Към пациенти
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-3">
+                <div class="card h-100">
+                    <div class="card-body text-center">
+                        <i class="bi bi-person-badge display-4 text-success"></i>
+                        <h5 class="card-title mt-3">Лекари</h5>
+                        <p class="card-text">Информация за лекарите в системата и техните специалности.</p>
+                        <a th:href="@{/doctors}" class="btn btn-success">Към лекари</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-3">
+                <div class="card h-100">
+                    <div class="card-body text-center">
+                        <i class="bi bi-journal-medical display-4 text-info"></i>
+                        <h5 class="card-title mt-3">Прегледи</h5>
+                        <p class="card-text">Записване и преглед на медицински визити и процедури.</p>
+                        <a th:href="@{/examinations}" class="btn btn-info text-white">Към прегледи</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row mt-4" sec:authorize="!isAuthenticated()">
+            <div class="col-12 text-center">
+                <div class="alert alert-info">
+                    <i class="bi bi-info-circle"></i>
+                    Моля, влезте в системата за да получите пълен достъп до функционалностите.
+                </div>
+                <a th:href="@{/login}" class="btn btn-primary btn-lg">
+                    <i class="bi bi-box-arrow-in-right"></i> Вход в системата
+                </a>
+            </div>
+        </div>
+    </div>
+</main>
+
+<div th:replace="~{fragments/layout :: scripts}"></div>
+</body>
+</html>
